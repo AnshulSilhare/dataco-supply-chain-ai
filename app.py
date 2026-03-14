@@ -728,7 +728,8 @@ with tab_bulk:
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown('<div class="sec-sub">Upload Your CSV File</div>', unsafe_allow_html=True)
-    uploaded   = st.file_uploader("Upload CSV File", type=["csv"], key="bulk_uploader", label_visibility="collapsed")
+    # Removed strict type=["csv"] constraint to fix Android file picker greying out valid CSVs
+    uploaded   = st.file_uploader("Upload CSV File", type=None, key="bulk_uploader", label_visibility="collapsed")
     using_demo = uploaded is None
 
     if using_demo:
