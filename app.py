@@ -487,7 +487,7 @@ with tab_single:
         with adv_col2:
             adv_profit = st.number_input("Profit Per Order ($)", min_value=0.0, value=20.0, step=5.0)
 
-    run_btn = st.button("⬡  RUN PREDICTIVE ANALYSIS", width='stretch')
+    run_btn = st.button("⬡  RUN PREDICTIVE ANALYSIS")
     st.markdown('</div>', unsafe_allow_html=True)
 
     if run_btn:
