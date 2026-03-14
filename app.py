@@ -438,80 +438,69 @@ hr { border-color:var(--border) !important; margin:2rem 0 !important; }
 """, unsafe_allow_html=True)
 
 # ──────────────────────────────────────────────
-# 7. PARTICLE CANVAS
+# 7. AMBIENT PARTICLES + CURSOR GLOW
 # ──────────────────────────────────────────────
-components.html("""
+# Pure CSS floating particles (no JS needed, works everywhere)
+st.markdown("""
+<style>
+/* Floating particle dots — pure CSS animation */
+.nexus-particles { position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:0; overflow:hidden; }
+.np { position:absolute; border-radius:50%; opacity:0; animation: float-particle linear infinite; }
+@keyframes float-particle {
+  0%   { transform:translate(0,0) scale(0); opacity:0; }
+  10%  { opacity:1; }
+  90%  { opacity:1; }
+  100% { transform:translate(var(--dx),var(--dy)) scale(1); opacity:0; }
+}
+
+/* Cursor glow orb */
+#nexus-cursor-glow {
+  position:fixed; top:0; left:0; width:280px; height:280px; border-radius:50%; pointer-events:none; z-index:1;
+  background:radial-gradient(circle, rgba(0,229,255,0.12) 0%, rgba(124,58,237,0.06) 40%, transparent 70%);
+  transform:translate(-50%,-50%); transition: opacity 0.3s ease;
+  filter:blur(2px); opacity:0;
+}
+</style>
+
+<div class="nexus-particles">
+  <div class="np" style="width:3px;height:3px;background:#00e5ff;left:8%;top:15%;--dx:120px;--dy:-200px;animation-duration:18s;animation-delay:0s;"></div>
+  <div class="np" style="width:2px;height:2px;background:#7c3aed;left:15%;top:60%;--dx:-80px;--dy:-300px;animation-duration:22s;animation-delay:1s;"></div>
+  <div class="np" style="width:4px;height:4px;background:#00e5ff;left:25%;top:80%;--dx:200px;--dy:-400px;animation-duration:20s;animation-delay:2s;"></div>
+  <div class="np" style="width:2px;height:2px;background:#00ffa3;left:35%;top:40%;--dx:-150px;--dy:-250px;animation-duration:16s;animation-delay:0.5s;"></div>
+  <div class="np" style="width:3px;height:3px;background:#7c3aed;left:45%;top:90%;--dx:100px;--dy:-350px;animation-duration:24s;animation-delay:3s;"></div>
+  <div class="np" style="width:2px;height:2px;background:#00e5ff;left:55%;top:20%;--dx:-120px;--dy:300px;animation-duration:19s;animation-delay:1.5s;"></div>
+  <div class="np" style="width:3px;height:3px;background:#00ffa3;left:65%;top:70%;--dx:80px;--dy:-280px;animation-duration:21s;animation-delay:4s;"></div>
+  <div class="np" style="width:2px;height:2px;background:#7c3aed;left:75%;top:30%;--dx:-200px;--dy:200px;animation-duration:17s;animation-delay:2.5s;"></div>
+  <div class="np" style="width:4px;height:4px;background:#00e5ff;left:85%;top:55%;--dx:150px;--dy:-320px;animation-duration:23s;animation-delay:0.8s;"></div>
+  <div class="np" style="width:2px;height:2px;background:#00ffa3;left:92%;top:85%;--dx:-100px;--dy:-250px;animation-duration:15s;animation-delay:3.5s;"></div>
+  <div class="np" style="width:3px;height:3px;background:#7c3aed;left:5%;top:45%;--dx:180px;--dy:-150px;animation-duration:26s;animation-delay:1.2s;"></div>
+  <div class="np" style="width:2px;height:2px;background:#00e5ff;left:40%;top:10%;--dx:-60px;--dy:400px;animation-duration:20s;animation-delay:4.5s;"></div>
+  <div class="np" style="width:3px;height:3px;background:#00ffa3;left:70%;top:5%;--dx:90px;--dy:350px;animation-duration:18s;animation-delay:2.2s;"></div>
+  <div class="np" style="width:2px;height:2px;background:#7c3aed;left:20%;top:95%;--dx:140px;--dy:-380px;animation-duration:25s;animation-delay:5s;"></div>
+  <div class="np" style="width:4px;height:4px;background:#00e5ff;left:50%;top:50%;--dx:-170px;--dy:-200px;animation-duration:22s;animation-delay:0.3s;"></div>
+</div>
+<div id="nexus-cursor-glow"></div>
+""", unsafe_allow_html=True)
+
+# Cursor-following glow — injected via st.markdown <script> (runs in Streamlit's own DOM, no iframe issues)
+st.markdown("""
 <script>
 (function(){
-  const parent = window.parent.document;
-  if(parent.getElementById('nexus-bg-canvas')) return; // Prevent duplicate injection on re-renders
-  
-  const cv = parent.createElement('canvas');
-  cv.id = 'nexus-bg-canvas';
-  cv.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;opacity:0.5;';
-  parent.body.insertBefore(cv, parent.body.firstChild);
-  
-  const cx = cv.getContext('2d');
-  let W,H,P=[],N=[], mx=-1000, my=-1000;
-  
-  function resize(){ W = cv.width = window.parent.innerWidth; H = cv.height = window.parent.innerHeight; }
-  window.parent.addEventListener('resize', resize);
-  resize();
-  
-  // Track mouse coordinates from parent Streamlit window
-  window.parent.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-  window.parent.addEventListener('mouseleave', () => { mx = -1000; my = -1000; });
-
-  for(let i=0;i<55;i++) P.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+.5,a:Math.random()});
-  for(let i=0;i<12;i++) N.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18});
-  
-  function draw(){
-    cx.clearRect(0,0,W,H);
-    for(let i=0;i<N.length;i++){
-      let n=N[i]; n.x+=n.vx; n.y+=n.vy;
-      if(n.x<0||n.x>W)n.vx*=-1; if(n.y<0||n.y>H)n.vy*=-1;
-
-      // Mouse connection & slight gravity for large nodes
-      let dm = Math.hypot(n.x-mx, n.y-my);
-      if(dm < 220){
-         cx.save(); cx.globalAlpha=(1-dm/220)*0.5; cx.strokeStyle='#00ffa3'; cx.lineWidth=1;
-         cx.beginPath(); cx.moveTo(n.x, n.y); cx.lineTo(mx, my); cx.stroke(); cx.restore();
-         n.vx += (mx-n.x)*0.00015;
-         n.vy += (my-n.y)*0.00015;
-      }
-      
-      // Speed limit nodes
-      let speed = Math.hypot(n.vx, n.vy);
-      if(speed > 0.8) { n.vx *= 0.95; n.vy *= 0.95; }
-
-      for(let j=i+1;j<N.length;j++){
-        let m=N[j],d=Math.hypot(n.x-m.x,n.y-m.y);
-        if(d<160){ cx.save(); cx.globalAlpha=(1-d/160)*0.3; cx.strokeStyle='#00e5ff'; cx.lineWidth=.6;
-          cx.beginPath(); cx.moveTo(n.x,n.y); cx.lineTo(m.x,m.y); cx.stroke(); cx.restore(); }
-      }
-      cx.save(); cx.globalAlpha=0.7; cx.fillStyle='#00e5ff'; cx.shadowBlur=8; cx.shadowColor='#00e5ff';
-      cx.beginPath(); cx.arc(n.x,n.y,2,0,Math.PI*2); cx.fill(); cx.restore();
-    }
-    
-    for(let p of P){
-      p.x+=p.vx; p.y+=p.vy;
-      if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
-      
-      // Mouse repel for small background particles
-      let dp = Math.hypot(p.x-mx, p.y-my);
-      if(dp < 120){ p.vx -= (mx-p.x)*0.0008; p.vy -= (my-p.y)*0.0008; }
-      let pspeed = Math.hypot(p.vx, p.vy);
-      if(pspeed > 1.2) { p.vx *= 0.9; p.vy *= 0.9; }
-
-      cx.save(); cx.globalAlpha=p.a*0.4; cx.fillStyle='#7c3aed';
-      cx.beginPath(); cx.arc(p.x,p.y,p.r,0,Math.PI*2); cx.fill(); cx.restore();
-    }
-    requestAnimationFrame(draw);
-  }
-  draw();
+  if(window.__nexusCursorActive) return;
+  window.__nexusCursorActive = true;
+  const glow = document.getElementById('nexus-cursor-glow');
+  if(!glow) return;
+  document.addEventListener('mousemove', function(e){
+    glow.style.left = e.clientX + 'px';
+    glow.style.top  = e.clientY + 'px';
+    glow.style.opacity = '1';
+  });
+  document.addEventListener('mouseleave', function(){
+    glow.style.opacity = '0';
+  });
 })();
 </script>
-""", height=0)
+""", unsafe_allow_html=True)
 
 # ──────────────────────────────────────────────
 # 8. HERO
