@@ -15,7 +15,10 @@
 
 **I built an AI tool to transition supply chain management from reactive to proactive.**
 
-[📊 View Features](#-key-features) • [💻 Explore Code](app.py) • [🤝 Connect on LinkedIn](https://www.linkedin.com/in/anshul-silhare)
+<div align="center">
+
+[🚀 Live App Demo](https://nexus-ai-logistics.streamlit.app) • [💻 Explore Code](app.py) • [🤝 Connect on LinkedIn](https://www.linkedin.com/in/anshul-silhare)
+
 
 </div>
 
