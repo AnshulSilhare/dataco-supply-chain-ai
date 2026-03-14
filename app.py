@@ -35,36 +35,56 @@ cols_path   = os.path.join(BASE_DIR, "dataco_columns.joblib")
 #    cleanly right out of the box.
 # ──────────────────────────────────────────────
 DEMO_CSV_CONTENT = """Shipping Mode,Order Region,Days_Scheduled,Order_Item_Quantity,Sales,Order_Profit_Per_Order
-Standard Class,Southeast Asia,5,2,250.50,40.20
+Standard Class,West Asia,5,2,250.50,40.20
 Second Class,South Asia,4,1,120.00,18.50
-First Class,Oceania,2,3,450.75,80.40
-Standard Class,Eastern Asia,6,4,300.60,45.00
-Same Day,West Asia,1,1,75.00,12.00
-Second Class,South Asia,4,2,210.30,35.10
-Standard Class,Southeast Asia,5,5,520.00,95.30
+First Class,Europe,2,3,450.75,80.40
+Standard Class,Africa,6,4,300.60,45.00
+Same Day,Central America,1,1,75.00,12.00
+Second Class,South America,4,2,210.30,35.10
+Standard Class,Europe,5,5,520.00,95.30
 First Class,West Asia,2,2,180.00,30.20
 Standard Class,South Asia,6,3,340.00,50.00
-Second Class,Oceania,4,1,95.00,15.00
-Standard Class,Eastern Asia,5,2,260.00,38.20
-First Class,Southeast Asia,2,4,480.00,85.60
-Standard Class,Oceania,6,3,330.00,52.30
+Second Class,Africa,4,1,95.00,15.00
+Standard Class,Central America,5,2,260.00,38.20
+First Class,South America,2,4,480.00,85.60
+Standard Class,Europe,6,3,330.00,52.30
 Second Class,West Asia,4,2,210.00,33.50
 Same Day,South Asia,1,1,90.00,14.20
-Standard Class,Eastern Asia,5,2,240.00,36.00
-First Class,Southeast Asia,2,3,410.00,75.50
-Second Class,West Asia,4,2,190.00,28.40
-Standard Class,South Asia,6,4,350.00,55.00
-First Class,Oceania,2,1,160.00,25.10
-Same Day,South Asia,1,1,92.00,14.50
-Standard Class,Eastern Asia,5,3,340.00,46.00
-First Class,Southeast Asia,2,2,210.00,45.50
-Second Class,West Asia,4,1,90.00,18.40
-Standard Class,South Asia,6,2,150.00,25.00
-First Class,Oceania,2,4,460.00,95.10
-Standard Class,Southeast Asia,5,1,150.50,20.20
-Second Class,South Asia,4,3,320.00,48.50
-First Class,Oceania,2,2,250.75,40.40
-Standard Class,Eastern Asia,6,1,100.60,15.00
+Standard Class,Africa,5,2,240.00,36.00
+First Class,Europe,2,3,410.00,75.50
+Second Class,Central America,4,2,190.00,28.40
+Standard Class,South America,6,4,350.00,55.00
+First Class,West Asia,2,1,160.00,25.10
+Standard Class,South Asia,5,3,310.00,49.20
+Second Class,Africa,4,2,205.00,31.00
+Same Day,Europe,1,1,88.00,13.40
+Standard Class,Central America,6,5,540.00,92.30
+First Class,South America,2,2,220.00,36.50
+Second Class,West Asia,4,1,115.00,18.20
+Standard Class,Africa,5,3,295.00,44.10
+First Class,Europe,2,4,470.00,82.00
+Standard Class,South Asia,6,2,260.00,39.00
+Second Class,Central America,4,2,205.00,32.00
+Standard Class,South America,5,3,315.00,48.20
+First Class,West Asia,2,3,420.00,74.00
+Second Class,Africa,4,1,98.00,16.20
+Same Day,Europe,1,1,70.00,11.00
+Standard Class,Central America,6,4,365.00,57.10
+First Class,South America,2,2,215.00,34.60
+Second Class,West Asia,4,2,198.00,30.10
+Standard Class,Africa,5,3,288.00,43.00
+First Class,Europe,2,4,460.00,81.00
+Standard Class,South Asia,6,3,330.00,50.40
+Second Class,Central America,4,2,200.00,29.70
+Standard Class,South America,5,3,310.00,47.50
+First Class,West Asia,2,2,205.00,33.20
+Second Class,Africa,4,1,102.00,17.10
+Same Day,Europe,1,1,76.00,12.20
+Standard Class,Central America,6,4,370.00,58.00
+First Class,South America,2,3,395.00,70.40
+Second Class,West Asia,4,2,208.00,32.80
+Standard Class,Africa,5,2,245.00,37.20
+First Class,Europe,2,3,430.00,76.90
 """
 DEMO_CSV_BYTES = DEMO_CSV_CONTENT.encode("utf-8")
 
