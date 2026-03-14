@@ -17,7 +17,7 @@
 
 <div align="center">
 
-[🚀 Live App Demo](https://nexus-ai-logistics.streamlit.app) • [💻 Explore Code](app.py) • [🤝 Connect on LinkedIn](https://www.linkedin.com/in/anshul-silhare)
+[🚀 Live App Demo](https://ai-delivery-risk-predictor-dataco.streamlit.app) • [💻 Explore Code](app.py) • [🤝 Connect on LinkedIn](https://www.linkedin.com/in/anshul-silhare)
 
 
 </div>
