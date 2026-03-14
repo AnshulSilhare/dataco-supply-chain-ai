@@ -318,6 +318,36 @@ hr { border-color:var(--border) !important; margin:2rem 0 !important; }
 [data-testid="stMetric"] { background:rgba(0,229,255,0.04); border:1px solid var(--border); border-radius:12px; padding:.75rem 1rem !important; }
 [data-testid="stMetricLabel"] { font-family:var(--font-mono) !important; font-size:.7rem !important; letter-spacing:1.5px !important; text-transform:uppercase !important; color:var(--muted) !important; }
 [data-testid="stMetricValue"] { font-family:var(--font-mono) !important; font-size:1.6rem !important; color:var(--cyan) !important; }
+/* ── Mobile responsive ── */
+@media (max-width: 768px) {
+    .hero-title { font-size: 2.4rem !important; }
+    .hero-badge { font-size: .6rem !important; letter-spacing: 2px !important; }
+    .hero-sub   { font-size: .78rem !important; }
+    .glass      { padding: 1.25rem 1rem !important; }
+    .sec-header { font-size: 1rem !important; }
+    .kpi-num    { font-size: 1.4rem !important; }
+    .feat-name  { width: 80px !important; font-size: .65rem !important; }
+    .result-danger, .result-success { padding: 1rem !important; }
+    .result-icon { font-size: 1.8rem !important; }
+
+    /* Stack columns vertically on mobile */
+    [data-testid="column"] {
+        width: 100% !important;
+        flex: 1 1 100% !important;
+        min-width: 100% !important;
+    }
+
+    /* Shrink tab labels */
+    .stTabs [data-baseweb="tab"] {
+        font-size: .65rem !important;
+        padding: 6px 10px !important;
+        letter-spacing: 0px !important;
+    }
+
+    /* Prevent horizontal scroll */
+    .stApp { overflow-x: hidden !important; }
+    .glass { overflow-x: hidden !important; }
+}
 </style>
 """, unsafe_allow_html=True)
 
