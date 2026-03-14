@@ -457,7 +457,7 @@ with tab_single:
         with adv_col2:
             adv_profit = st.number_input("Profit Per Order ($)", min_value=0.0, value=20.0, step=5.0)
 
-    run_btn = st.button("⬡  RUN PREDICTIVE ANALYSIS", use_container_width=True)
+    run_btn = st.button("⬡  RUN PREDICTIVE ANALYSIS", width='stretch')
     st.markdown('</div>', unsafe_allow_html=True)
 
     if run_btn:
@@ -612,7 +612,7 @@ with tab_single:
                     font=dict(color='#94a3b8',family='Space Mono'),
                     margin=dict(l=30,r=30,t=20,b=20), height=220,
                 )
-                st.plotly_chart(fig_radar, use_container_width=True, config={'displayModeBar':False})
+                st.plotly_chart(fig_radar, width='stretch', config={'displayModeBar':False})
 
                 st.markdown('<div class="sec-sub">Route Deviation Projection</div>', unsafe_allow_html=True)
                 extra       = round(probability * 5) if prediction[0] == 1 else 0
@@ -630,7 +630,7 @@ with tab_single:
                     xaxis={'title':'Days After Dispatch','showgrid':True,'gridcolor':'rgba(255,255,255,0.06)','color':'#64748b'},
                     yaxis={'title':'','color':'#64748b'}, showlegend=False, height=140,
                 )
-                st.plotly_chart(fig_tl, use_container_width=True, config={'displayModeBar':False})
+                st.plotly_chart(fig_tl, width='stretch', config={'displayModeBar':False})
                 st.info(f"⬡  **Insight**: {'At-risk shipment — consider expediting or re-routing.' if prediction[0]==1 else 'All signals nominal — no intervention required.'}")
                 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -691,11 +691,11 @@ with tab_bulk:
     with dl1:
         st.download_button("⬡  DOWNLOAD DEMO CSV", data=DEMO_CSV_BYTES,
                            file_name="nexus_demo_batch.csv", mime="text/csv",
-                           use_container_width=True)
+                           width='stretch')
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown('<div class="sec-sub">Upload Your CSV File</div>', unsafe_allow_html=True)
-    uploaded   = st.file_uploader("", type=["csv"], key="bulk_uploader")
+    uploaded   = st.file_uploader("Upload CSV File", type=["csv"], key="bulk_uploader", label_visibility="collapsed")
     using_demo = uploaded is None
 
     if using_demo:
@@ -742,10 +742,10 @@ with tab_bulk:
             demo_label = " (demo)" if using_demo else ""
             st.markdown(f'<div class="sec-sub" style="margin-top:1rem">Preview{demo_label} — {len(bulk_df):,} records ready</div>',
                         unsafe_allow_html=True)
-            st.dataframe(bulk_df.head(8), use_container_width=True)
+            st.dataframe(bulk_df.head(8), width='stretch')
 
             btn_label = "⬡  RUN DEMO PREDICTION" if using_demo else "⬡  EXECUTE ENTERPRISE BATCH PREDICTION"
-            if st.button(btn_label, use_container_width=True):
+            if st.button(btn_label, width='stretch'):
                 pred_ok = False
                 try:
                     with st.spinner("⬡  Nexus Engine classifying batch..."):
@@ -793,13 +793,13 @@ with tab_bulk:
                         st.balloons()
 
                     st.success(f"⬡  Batch complete — {len(bulk_df):,} records classified")
-                    st.dataframe(bulk_df, use_container_width=True)
+                    st.dataframe(bulk_df, width='stretch')
 
                     export_name = "nexus_demo_predictions.csv" if using_demo else "nexus_batch_predictions.csv"
                     st.download_button(
                         "⬡  EXPORT CLASSIFIED RECORDS (.CSV)",
                         data=bulk_df.to_csv(index=False).encode("utf-8"),
-                        file_name=export_name, mime="text/csv", use_container_width=True,
+                        file_name=export_name, mime="text/csv", width='stretch',
                     )
 
     st.markdown('</div>', unsafe_allow_html=True)
