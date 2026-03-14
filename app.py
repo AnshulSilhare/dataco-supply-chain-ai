@@ -445,16 +445,36 @@ components.html("""
 <script>
 (function(){
   const cv=document.getElementById('c'),cx=cv.getContext('2d');
-  let W,H,P=[],N=[];
+  let W,H,P=[],N=[], mx=-1000, my=-1000;
   function resize(){ W=cv.width=window.innerWidth; H=cv.height=window.innerHeight; }
   window.addEventListener('resize',resize); resize();
+  
+  // Track mouse coordinates from parent Streamlit window
+  window.parent.document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  window.parent.document.addEventListener('mouseleave', () => { mx = -1000; my = -1000; });
+
   for(let i=0;i<55;i++) P.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+.5,a:Math.random()});
   for(let i=0;i<12;i++) N.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18});
+  
   function draw(){
     cx.clearRect(0,0,W,H);
     for(let i=0;i<N.length;i++){
       let n=N[i]; n.x+=n.vx; n.y+=n.vy;
       if(n.x<0||n.x>W)n.vx*=-1; if(n.y<0||n.y>H)n.vy*=-1;
+
+      // Mouse connection & slight gravity for large nodes
+      let dm = Math.hypot(n.x-mx, n.y-my);
+      if(dm < 220){
+         cx.save(); cx.globalAlpha=(1-dm/220)*0.5; cx.strokeStyle='#00ffa3'; cx.lineWidth=1;
+         cx.beginPath(); cx.moveTo(n.x, n.y); cx.lineTo(mx, my); cx.stroke(); cx.restore();
+         n.vx += (mx-n.x)*0.00015;
+         n.vy += (my-n.y)*0.00015;
+      }
+      
+      // Speed limit nodes
+      let speed = Math.hypot(n.vx, n.vy);
+      if(speed > 0.8) { n.vx *= 0.95; n.vy *= 0.95; }
+
       for(let j=i+1;j<N.length;j++){
         let m=N[j],d=Math.hypot(n.x-m.x,n.y-m.y);
         if(d<160){ cx.save(); cx.globalAlpha=(1-d/160)*0.3; cx.strokeStyle='#00e5ff'; cx.lineWidth=.6;
@@ -463,9 +483,17 @@ components.html("""
       cx.save(); cx.globalAlpha=0.7; cx.fillStyle='#00e5ff'; cx.shadowBlur=8; cx.shadowColor='#00e5ff';
       cx.beginPath(); cx.arc(n.x,n.y,2,0,Math.PI*2); cx.fill(); cx.restore();
     }
+    
     for(let p of P){
       p.x+=p.vx; p.y+=p.vy;
       if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
+      
+      // Mouse repel for small background particles
+      let dp = Math.hypot(p.x-mx, p.y-my);
+      if(dp < 120){ p.vx -= (mx-p.x)*0.0008; p.vy -= (my-p.y)*0.0008; }
+      let pspeed = Math.hypot(p.vx, p.vy);
+      if(pspeed > 1.2) { p.vx *= 0.9; p.vy *= 0.9; }
+
       cx.save(); cx.globalAlpha=p.a*0.4; cx.fillStyle='#7c3aed';
       cx.beginPath(); cx.arc(p.x,p.y,p.r,0,Math.PI*2); cx.fill(); cx.restore();
     }
