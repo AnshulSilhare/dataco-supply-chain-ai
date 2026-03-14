@@ -752,7 +752,7 @@ with tab_bulk:
     dl1, _ = st.columns([1, 3])
     with dl1:
         st.download_button("⬡  DOWNLOAD DEMO CSV", data=DEMO_CSV_BYTES,
-                           file_name="nexus_demo_batch.csv", mime="text/csv",
+                           file_name=f"nexus_demo_batch_{int(time.time())}.csv", mime="text/csv",
                            use_container_width=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
