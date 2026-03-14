@@ -386,6 +386,12 @@ hr { border-color:var(--border) !important; margin:2rem 0 !important; }
 [data-testid="stMetricLabel"] { font-family:var(--font-mono) !important; font-size:.7rem !important; letter-spacing:1.5px !important; text-transform:uppercase !important; color:var(--muted) !important; }
 [data-testid="stMetricValue"] { font-family:var(--font-mono) !important; font-size:1.6rem !important; color:var(--cyan) !important; }
 
+/* Custom Lists (replaces tables to block Streamlit injecting table CSS) */
+.list-row { display:flex; padding:.6rem 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+.list-row:last-child { border-bottom:none; }
+.list-key { width:40%; font-family:var(--font-mono); font-size:.78rem; color:#64748b; flex-shrink:0; }
+.list-val { width:60%; font-family:var(--font-mono); font-size:.78rem; color:#e2e8f0; }
+
 /* ── Mobile responsive ── */
 @media (max-width: 768px) {
     .hero-title { font-size: 2.8rem !important; }
@@ -927,45 +933,39 @@ with tab_about:
     a1, a2 = st.columns(2, gap="large")
     with a1:
         st.markdown("""<div class="sec-sub">Core Engine</div>
-        <table style="width:100%;font-family:var(--font-mono);font-size:.78rem;border-collapse:collapse;color:#e2e8f0">
-          <tr style="border-bottom:1px solid rgba(0,229,255,0.1)"><td style="padding:.5rem 0;color:#64748b">Algorithm</td><td>Random Forest Classifier</td></tr>
-          <tr style="border-bottom:1px solid rgba(0,229,255,0.1)"><td style="padding:.5rem 0;color:#64748b">Estimators</td><td>100 trees</td></tr>
-          <tr style="border-bottom:1px solid rgba(0,229,255,0.1)"><td style="padding:.5rem 0;color:#64748b">Feature Set</td><td>One-hot + Scaled numerics</td></tr>
-          <tr style="border-bottom:1px solid rgba(0,229,255,0.1)"><td style="padding:.5rem 0;color:#64748b">Accuracy</td><td style="color:#00e5ff">73.31%</td></tr>
-          <tr><td style="padding:.5rem 0;color:#64748b">Dataset</td><td>DataCo Global Supply Chain</td></tr>
-        </table>""", unsafe_allow_html=True)
+          <div class="list-row"><div class="list-key">Algorithm</div><div class="list-val">Random Forest Classifier</div></div>
+          <div class="list-row"><div class="list-key">Estimators</div><div class="list-val">100 trees</div></div>
+          <div class="list-row"><div class="list-key">Feature Set</div><div class="list-val">One-hot + Scaled numerics</div></div>
+          <div class="list-row"><div class="list-key">Accuracy</div><div class="list-val" style="color:#00e5ff">73.31%</div></div>
+          <div class="list-row"><div class="list-key">Dataset</div><div class="list-val">DataCo Global Supply Chain</div></div>
+        """, unsafe_allow_html=True)
     with a2:
         st.markdown("""<div class="sec-sub">Performance Metrics</div>
-        <table style="width:100%;font-family:var(--font-mono);font-size:.78rem;border-collapse:collapse;color:#e2e8f0">
-          <tr style="border-bottom:1px solid rgba(0,229,255,0.1)"><td style="padding:.5rem 0;color:#64748b">Routes Indexed</td><td style="color:#00ffa3">180,519</td></tr>
-          <tr style="border-bottom:1px solid rgba(0,229,255,0.1)"><td style="padding:.5rem 0;color:#64748b">Avg Inference</td><td>0.4s</td></tr>
-          <tr style="border-bottom:1px solid rgba(0,229,255,0.1)"><td style="padding:.5rem 0;color:#64748b">Batch Throughput</td><td>&gt;10k rows/min</td></tr>
-          <tr style="border-bottom:1px solid rgba(0,229,255,0.1)"><td style="padding:.5rem 0;color:#64748b">Normalizer</td><td>StandardScaler</td></tr>
-          <tr><td style="padding:.5rem 0;color:#64748b">Framework</td><td>scikit-learn · Streamlit</td></tr>
-        </table>""", unsafe_allow_html=True)
+          <div class="list-row"><div class="list-key">Routes Indexed</div><div class="list-val" style="color:#00ffa3">180,519</div></div>
+          <div class="list-row"><div class="list-key">Avg Inference</div><div class="list-val">0.4s</div></div>
+          <div class="list-row"><div class="list-key">Throughput</div><div class="list-val">&gt;10k rows/min</div></div>
+          <div class="list-row"><div class="list-key">Normalizer</div><div class="list-val">StandardScaler</div></div>
+          <div class="list-row"><div class="list-key">Framework</div><div class="list-val">scikit-learn · Streamlit</div></div>
+        """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown('<div class="sec-sub">Accepted Input Values</div>', unsafe_allow_html=True)
     b1, b2 = st.columns(2, gap="large")
+    
     with b1:
         st.markdown("""
-        <table style="width:100%;font-family:var(--font-mono);font-size:.75rem;border-collapse:collapse;color:#e2e8f0">
-          <tr style="border-bottom:1px solid rgba(0,229,255,0.1)"><th style="color:#00e5ff;text-align:left;padding:.4rem 0">Shipping Mode</th></tr>
-          <tr style="border-bottom:1px solid rgba(255,255,255,0.05)"><td style="padding:.35rem 0;color:#94a3b8">Standard Class</td></tr>
-          <tr style="border-bottom:1px solid rgba(255,255,255,0.05)"><td style="padding:.35rem 0;color:#94a3b8">First Class</td></tr>
-          <tr style="border-bottom:1px solid rgba(255,255,255,0.05)"><td style="padding:.35rem 0;color:#94a3b8">Second Class</td></tr>
-          <tr><td style="padding:.35rem 0;color:#94a3b8">Same Day</td></tr>
-        </table>""", unsafe_allow_html=True)
+        <div style="font-family:var(--font-mono);font-size:.78rem;border-bottom:1px solid rgba(0,229,255,0.1);padding-bottom:.4rem;margin-bottom:.4rem;color:#00e5ff">Shipping Mode</div>
+        <div style="font-family:var(--font-mono);font-size:.75rem;color:#94a3b8;line-height:2">
+          Standard Class<br>First Class<br>Second Class<br>Same Day
+        </div>
+        """, unsafe_allow_html=True)
     with b2:
         st.markdown("""
-        <table style="width:100%;font-family:var(--font-mono);font-size:.75rem;border-collapse:collapse;color:#e2e8f0">
-          <tr style="border-bottom:1px solid rgba(0,229,255,0.1)"><th style="color:#00e5ff;text-align:left;padding:.4rem 0">Order Region</th></tr>
-          <tr style="border-bottom:1px solid rgba(255,255,255,0.05)"><td style="padding:.35rem 0;color:#94a3b8">Southeast / South Asia</td></tr>
-          <tr style="border-bottom:1px solid rgba(255,255,255,0.05)"><td style="padding:.35rem 0;color:#94a3b8">Eastern / West Asia</td></tr>
-          <tr style="border-bottom:1px solid rgba(255,255,255,0.05)"><td style="padding:.35rem 0;color:#94a3b8">Europe / Africa</td></tr>
-          <tr style="border-bottom:1px solid rgba(255,255,255,0.05)"><td style="padding:.35rem 0;color:#94a3b8">Central / South America</td></tr>
-          <tr><td style="padding:.35rem 0;color:#94a3b8">Oceania</td></tr>
-        </table>""", unsafe_allow_html=True)
+        <div style="font-family:var(--font-mono);font-size:.78rem;border-bottom:1px solid rgba(0,229,255,0.1);padding-bottom:.4rem;margin-bottom:.4rem;color:#00e5ff">Order Region</div>
+        <div style="font-family:var(--font-mono);font-size:.75rem;color:#94a3b8;line-height:2">
+          Southeast / South Asia<br>Eastern / West Asia<br>Europe / Africa<br>Central / South America<br>Oceania
+        </div>
+        """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("""
