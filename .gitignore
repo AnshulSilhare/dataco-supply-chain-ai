@@ -1,6 +1,3 @@
-# Ignore massive AI models
-*.joblib
-
 # Ignore environment folders and cache
 __pycache__/
 .env
@@ -8,7 +5,4 @@ env/
 venv/
 PythonWe/
 
-# Ignore local datasets
-*.csv
-*.xlsx
 
