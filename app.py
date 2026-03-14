@@ -318,6 +318,7 @@ hr { border-color:var(--border) !important; margin:2rem 0 !important; }
 [data-testid="stMetric"] { background:rgba(0,229,255,0.04); border:1px solid var(--border); border-radius:12px; padding:.75rem 1rem !important; }
 [data-testid="stMetricLabel"] { font-family:var(--font-mono) !important; font-size:.7rem !important; letter-spacing:1.5px !important; text-transform:uppercase !important; color:var(--muted) !important; }
 [data-testid="stMetricValue"] { font-family:var(--font-mono) !important; font-size:1.6rem !important; color:var(--cyan) !important; }
+
 /* ── Mobile responsive ── */
 @media (max-width: 768px) {
     .hero-title { font-size: 2.4rem !important; }
@@ -445,10 +446,12 @@ document.querySelectorAll('.cnt').forEach(el=>{
 # ──────────────────────────────────────────────
 # 10. LOAD MODEL
 # ──────────────────────────────────────────────
+@st.cache_resource(show_spinner=False)
+def load_nexus_models():
+    return joblib.load(model_path), joblib.load(scaler_path), joblib.load(cols_path)
+
 try:
-    model         = joblib.load(model_path)
-    scaler        = joblib.load(scaler_path)
-    model_columns = joblib.load(cols_path)
+    model, scaler, model_columns = load_nexus_models()
     st.success("⬡  AI BRAIN ONLINE — Random Forest ensemble loaded successfully")
 except Exception as e:
     st.error(f"⬡  MODEL ERROR — {e}")
@@ -725,7 +728,7 @@ with tab_bulk:
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown('<div class="sec-sub">Upload Your CSV File</div>', unsafe_allow_html=True)
-    uploaded   = st.file_uploader("", type=["csv"], key="bulk_uploader")
+    uploaded   = st.file_uploader("Upload CSV File", type=["csv"], key="bulk_uploader", label_visibility="collapsed")
     using_demo = uploaded is None
 
     if using_demo:
