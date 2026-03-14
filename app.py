@@ -440,67 +440,102 @@ hr { border-color:var(--border) !important; margin:2rem 0 !important; }
 # ──────────────────────────────────────────────
 # 7. AMBIENT PARTICLES + CURSOR GLOW
 # ──────────────────────────────────────────────
-# Pure CSS floating particles (no JS needed, works everywhere)
+# Cursor glow orb — pure CSS, positioned via custom properties set by JS below
 st.markdown("""
 <style>
-/* Floating particle dots — pure CSS animation */
-.nexus-particles { position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:0; overflow:hidden; }
-.np { position:absolute; border-radius:50%; opacity:0; animation: float-particle linear infinite; }
-@keyframes float-particle {
-  0%   { transform:translate(0,0) scale(0); opacity:0; }
-  10%  { opacity:1; }
-  90%  { opacity:1; }
-  100% { transform:translate(var(--dx),var(--dy)) scale(1); opacity:0; }
-}
-
-/* Cursor glow orb */
 #nexus-cursor-glow {
-  position:fixed; top:0; left:0; width:280px; height:280px; border-radius:50%; pointer-events:none; z-index:1;
-  background:radial-gradient(circle, rgba(0,229,255,0.12) 0%, rgba(124,58,237,0.06) 40%, transparent 70%);
-  transform:translate(-50%,-50%); transition: opacity 0.3s ease;
-  filter:blur(2px); opacity:0;
+  position:fixed; top:var(--mouse-y,-100px); left:var(--mouse-x,-100px);
+  width:300px; height:300px; border-radius:50%; pointer-events:none; z-index:1;
+  background:radial-gradient(circle, rgba(0,229,255,0.15) 0%, rgba(124,58,237,0.07) 40%, transparent 70%);
+  transform:translate(-50%,-50%); filter:blur(1px);
+  transition: top 0.08s linear, left 0.08s linear;
 }
 </style>
-
-<div class="nexus-particles">
-  <div class="np" style="width:3px;height:3px;background:#00e5ff;left:8%;top:15%;--dx:120px;--dy:-200px;animation-duration:18s;animation-delay:0s;"></div>
-  <div class="np" style="width:2px;height:2px;background:#7c3aed;left:15%;top:60%;--dx:-80px;--dy:-300px;animation-duration:22s;animation-delay:1s;"></div>
-  <div class="np" style="width:4px;height:4px;background:#00e5ff;left:25%;top:80%;--dx:200px;--dy:-400px;animation-duration:20s;animation-delay:2s;"></div>
-  <div class="np" style="width:2px;height:2px;background:#00ffa3;left:35%;top:40%;--dx:-150px;--dy:-250px;animation-duration:16s;animation-delay:0.5s;"></div>
-  <div class="np" style="width:3px;height:3px;background:#7c3aed;left:45%;top:90%;--dx:100px;--dy:-350px;animation-duration:24s;animation-delay:3s;"></div>
-  <div class="np" style="width:2px;height:2px;background:#00e5ff;left:55%;top:20%;--dx:-120px;--dy:300px;animation-duration:19s;animation-delay:1.5s;"></div>
-  <div class="np" style="width:3px;height:3px;background:#00ffa3;left:65%;top:70%;--dx:80px;--dy:-280px;animation-duration:21s;animation-delay:4s;"></div>
-  <div class="np" style="width:2px;height:2px;background:#7c3aed;left:75%;top:30%;--dx:-200px;--dy:200px;animation-duration:17s;animation-delay:2.5s;"></div>
-  <div class="np" style="width:4px;height:4px;background:#00e5ff;left:85%;top:55%;--dx:150px;--dy:-320px;animation-duration:23s;animation-delay:0.8s;"></div>
-  <div class="np" style="width:2px;height:2px;background:#00ffa3;left:92%;top:85%;--dx:-100px;--dy:-250px;animation-duration:15s;animation-delay:3.5s;"></div>
-  <div class="np" style="width:3px;height:3px;background:#7c3aed;left:5%;top:45%;--dx:180px;--dy:-150px;animation-duration:26s;animation-delay:1.2s;"></div>
-  <div class="np" style="width:2px;height:2px;background:#00e5ff;left:40%;top:10%;--dx:-60px;--dy:400px;animation-duration:20s;animation-delay:4.5s;"></div>
-  <div class="np" style="width:3px;height:3px;background:#00ffa3;left:70%;top:5%;--dx:90px;--dy:350px;animation-duration:18s;animation-delay:2.2s;"></div>
-  <div class="np" style="width:2px;height:2px;background:#7c3aed;left:20%;top:95%;--dx:140px;--dy:-380px;animation-duration:25s;animation-delay:5s;"></div>
-  <div class="np" style="width:4px;height:4px;background:#00e5ff;left:50%;top:50%;--dx:-170px;--dy:-200px;animation-duration:22s;animation-delay:0.3s;"></div>
-</div>
 <div id="nexus-cursor-glow"></div>
 """, unsafe_allow_html=True)
 
-# Cursor-following glow — injected via st.markdown <script> (runs in Streamlit's own DOM, no iframe issues)
-st.markdown("""
+# Interactive canvas particles — renders via components.html with position:fixed (escapes iframe clip)
+components.html("""
+<canvas id="c" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;opacity:0.55;"></canvas>
 <script>
 (function(){
-  if(window.__nexusCursorActive) return;
-  window.__nexusCursorActive = true;
-  const glow = document.getElementById('nexus-cursor-glow');
-  if(!glow) return;
-  document.addEventListener('mousemove', function(e){
-    glow.style.left = e.clientX + 'px';
-    glow.style.top  = e.clientY + 'px';
-    glow.style.opacity = '1';
-  });
-  document.addEventListener('mouseleave', function(){
-    glow.style.opacity = '0';
-  });
+  var cv=document.getElementById('c'), cx=cv.getContext('2d');
+  var W, H, P=[], N=[], mx=-9999, my=-9999;
+
+  function resize(){ W=cv.width=window.innerWidth; H=cv.height=window.innerHeight; }
+  window.addEventListener('resize', resize); resize();
+
+  // Track mouse from parent Streamlit window + update CSS custom property for glow orb
+  try {
+    window.parent.document.addEventListener('mousemove', function(e){
+      mx = e.clientX; my = e.clientY;
+      try {
+        window.parent.document.documentElement.style.setProperty('--mouse-x', mx+'px');
+        window.parent.document.documentElement.style.setProperty('--mouse-y', my+'px');
+      } catch(x){}
+    });
+    window.parent.document.addEventListener('mouseleave', function(){ mx=-9999; my=-9999; });
+  } catch(err){}
+
+  for(var i=0;i<60;i++) P.push({x:Math.random()*W, y:Math.random()*H, vx:(Math.random()-.5)*.35, vy:(Math.random()-.5)*.35, r:Math.random()*1.8+.4, a:Math.random()*.6+.2});
+  for(var i=0;i<14;i++) N.push({x:Math.random()*W, y:Math.random()*H, vx:(Math.random()-.5)*.2, vy:(Math.random()-.5)*.2});
+
+  function draw(){
+    cx.clearRect(0,0,W,H);
+
+    // Large network nodes — connect to each other + mouse
+    for(var i=0;i<N.length;i++){
+      var n=N[i]; n.x+=n.vx; n.y+=n.vy;
+      if(n.x<0||n.x>W) n.vx*=-1;
+      if(n.y<0||n.y>H) n.vy*=-1;
+
+      // Mouse gravity pull + green connection line
+      var dm=Math.hypot(n.x-mx, n.y-my);
+      if(dm<240){
+        cx.save(); cx.globalAlpha=(1-dm/240)*0.55; cx.strokeStyle='#00ffa3'; cx.lineWidth=1.2;
+        cx.beginPath(); cx.moveTo(n.x,n.y); cx.lineTo(mx,my); cx.stroke(); cx.restore();
+        n.vx+=(mx-n.x)*0.00018;
+        n.vy+=(my-n.y)*0.00018;
+      }
+      var sp=Math.hypot(n.vx,n.vy);
+      if(sp>0.9){n.vx*=0.94; n.vy*=0.94;}
+
+      // Node-to-node connections
+      for(var j=i+1;j<N.length;j++){
+        var m=N[j], d=Math.hypot(n.x-m.x, n.y-m.y);
+        if(d<170){
+          cx.save(); cx.globalAlpha=(1-d/170)*0.35; cx.strokeStyle='#00e5ff'; cx.lineWidth=.7;
+          cx.beginPath(); cx.moveTo(n.x,n.y); cx.lineTo(m.x,m.y); cx.stroke(); cx.restore();
+        }
+      }
+      // Draw node dot
+      cx.save(); cx.globalAlpha=0.8; cx.fillStyle='#00e5ff'; cx.shadowBlur=10; cx.shadowColor='#00e5ff';
+      cx.beginPath(); cx.arc(n.x,n.y,2.5,0,Math.PI*2); cx.fill(); cx.restore();
+    }
+
+    // Small dust particles — repel from mouse
+    for(var k=0;k<P.length;k++){
+      var p=P[k]; p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>W) p.vx*=-1;
+      if(p.y<0||p.y>H) p.vy*=-1;
+
+      var dp=Math.hypot(p.x-mx, p.y-my);
+      if(dp<130){
+        p.vx-=(mx-p.x)*0.001;
+        p.vy-=(my-p.y)*0.001;
+      }
+      var ps=Math.hypot(p.vx,p.vy);
+      if(ps>1.3){p.vx*=0.88; p.vy*=0.88;}
+
+      cx.save(); cx.globalAlpha=p.a*0.5; cx.fillStyle='#7c3aed';
+      cx.beginPath(); cx.arc(p.x,p.y,p.r,0,Math.PI*2); cx.fill(); cx.restore();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
 })();
 </script>
-""", unsafe_allow_html=True)
+""", height=0)
 
 # ──────────────────────────────────────────────
 # 8. HERO
