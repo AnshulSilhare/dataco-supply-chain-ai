@@ -776,7 +776,7 @@ with tab_bulk:
             st.dataframe(bulk_df.head(8), width='stretch')
 
             btn_label = "⬡  RUN DEMO PREDICTION" if using_demo else "⬡  EXECUTE ENTERPRISE BATCH PREDICTION"
-            if st.button(btn_label, ,
+            if st.button(btn_label,
     use_container_width=True):
                 pred_ok = False
                 try:
