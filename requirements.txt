@@ -3,7 +3,7 @@ joblib==1.3.2
 pandas==2.1.4
 numpy==1.26.4
 plotly==5.18.0
-scikit-learn==1.3.2
+scikit-learn==1.8.0
 requests==2.31.0
 streamlit-lottie==0.0.5
 shap==0.42.0
