@@ -730,11 +730,15 @@ document.querySelectorAll('.cnt').forEach(el=>{
 # ──────────────────────────────────────────────
 # 10. LOAD MODEL (function defined at top of file)
 # ──────────────────────────────────────────────
+import traceback
+
 try:
     model, scaler, model_columns = load_nexus_models()
     st.success("⬡  AI BRAIN ONLINE — Random Forest ensemble loaded successfully")
 except Exception as e:
     st.error(f"⬡  MODEL ERROR — {e}")
+    st.error("Full Traceback:")
+    st.code(traceback.format_exc(), language="python")
     st.stop()
 
 st.markdown("<hr>", unsafe_allow_html=True)
